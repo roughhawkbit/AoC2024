@@ -12,3 +12,13 @@ y.sort()
 z = sum([abs(t[0] - t[1]) for t in zip(x, y)])
 
 print(z)
+
+similarity_cache = {}
+similarity_tally = 0
+for i in x:
+    if not i in similarity_cache.keys():
+        n_i_in_y = y.count(i)
+        similarity_cache[i] = n_i_in_y
+    similarity_tally += i * similarity_cache[i]
+
+print(similarity_tally)
