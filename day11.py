@@ -3,27 +3,38 @@ with open('input.txt', 'r') as f:
 
 stones = [int(c) for c in input.split(' ')]
 
-print(stones)
+# print(stones)
 
-def blink(stones):
-    new_stones = []
-    for i, stone in enumerate(stones):
-        if stone == 0:
-            stones[i] = 1
-        elif len(str(stone)) % 2 == 0:
-            c = str(stone)
-            l = len(c)
-            stones[i] = int(c[:int(l/2)])
-            new_stones.append((i, int(c[int(l/2):])))
+stone_freqs = {}
+transitions = {}
+
+for stone in stones:
+    if stone in stone_freqs:
+        stone_freqs[stone] = stone_freqs[stone] + 1
+    else:
+        stone_freqs[stone] = 1
+
+for i in range(75):
+    new_stone_freqs = {}
+    for num, count in stone_freqs.items():
+        if num in transitions:
+            new_nums = transitions[num]
         else:
-            stones[i] = stone * 2024
-    for i, new_stone in enumerate(new_stones):
-        stones.insert(new_stone[0]+i+1, new_stone[1])
-    return stones
+            if num == 0:
+                new_nums = [1]
+            elif len(str(num)) % 2 == 0:
+                c = str(num)
+                l = len(c)
+                new_nums = [int(c[:int(l/2)]), int(c[int(l/2):])]
+            else:
+                new_nums = [num * 2024]
+            transitions[num] = new_nums
+        for new_num in new_nums:
+            if new_num in new_stone_freqs:
+                new_stone_freqs[new_num] = new_stone_freqs[new_num] + count
+            else:
+                new_stone_freqs[new_num] = count
+    stone_freqs = new_stone_freqs
 
-for i in range(25):
-    stones = blink(stones)
-    # print(stones)
-    # print(f"{i}: {len(stones)}")
-
-print(len(stones))
+# print(stone_freqs)
+print(sum(stone_freqs.values()))
